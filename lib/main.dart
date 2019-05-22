@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:foodstore/indicator.dart';
+import 'package:foodstore/detailpage.dart';
+import 'package:foodstore/mycart.dart';
+import 'package:foodstore/PageViewCard.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,17 +12,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      routes: {
+        'detail': (c) => DetailFoodPage(),
+        'mycart': (c) => MyCart()
+      },
       home: MyHomePage(title: 'The Shy\'s Food'),
     );
   }
@@ -46,12 +43,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selected = 1;
-  PageController _pageCtrl;
-  int currentPageIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    _pageCtrl = PageController(initialPage: currentPageIndex, keepPage: true, viewportFraction: 0.9);
   }
   @override
   Widget build(BuildContext context) {
@@ -61,6 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    // return Scaffold(
+    //   appBar: AppBar(title: Text('sd'),),
+    //   body: RaisedButton(
+    //     child: Text('onpress'),
+    //     onPressed: (){
+    //       Navigator.of(context).pushNamed('mycart');
+    //     },
+    //   ),
+    // );
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -69,88 +73,61 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SafeArea(
+      body: _body()
+    );
+  }
+  Widget _body () {
+    return SafeArea(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  FoodButton(
-                    icon: Icons.favorite_border,
-                    selected: selected == 1,
-                    onTap: () {
-                      setState(() {
-                        selected = 1;
-                      });
-                    },
-                  ),
-                  SizedBox(width: 20,),
-                  FoodButton(
-                    icon: Icons.wallpaper,
-                    selected: selected == 2,
-                    onTap: () {
-                      setState(() {
-                        selected = 2;
-                      });
-                    },
-                  ),
-                  SizedBox(width: 20,),
-                  FoodButton(
-                    icon: Icons.map,
-                    selected: selected == 3,
-                    onTap: () {
-                      setState(() {
-                        selected = 3;
-                      });
-                    },
-                  ),
-                  
-                ],
-              ),
-            ),
+            _menuButtons(),
             Expanded(
-              child: PageView.builder(
-                controller: _pageCtrl,
-                onPageChanged: (index) {
-                  setState(() {
-                    currentPageIndex = index;
-                  });
-                },
-                itemCount: 4,
-                itemBuilder: (c, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [BoxShadow(color: Color(0x08000000), blurRadius: 20, spreadRadius: 0)],
-                      color: Colors.white
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Text('Wolf tooch French fries')
-                      ],
-                    ),
-                  );
-                },
-              ),
+              child: PageViewCard(),
             ),
-            IndicatorDot(selected: currentPageIndex, length: 4,),
             SizedBox(height: 20,),
-            Container(
-              width: MediaQuery.of(context).size.width * .8,
-              height: 50,
-              child: RaisedButton(
-                shape:  RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                color: Color(0xFFEF6C32),
-                child: Text('My Cart', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
-                onPressed: (){},
-              ),
-            )
+            RoundedButton()
           ],
         ),
-      )
+      );
+  }
+  Widget _menuButtons () {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FoodButton(
+            icon: Icons.favorite_border,
+            selected: selected == 1,
+            onTap: () {
+              setState(() {
+                selected = 1;
+              });
+            },
+          ),
+          SizedBox(width: 20,),
+          FoodButton(
+            icon: Icons.wallpaper,
+            selected: selected == 2,
+            onTap: () {
+              setState(() {
+                selected = 2;
+              });
+            },
+          ),
+          SizedBox(width: 20,),
+          FoodButton(
+            icon: Icons.map,
+            selected: selected == 3,
+            onTap: () {
+              setState(() {
+                selected = 3;
+              });
+            },
+          ),
+          
+        ],
+      ),
     );
   }
 }
@@ -170,10 +147,38 @@ class FoodButton extends StatelessWidget {
       bcolor = Color(0xFFEF6C32);
       iconcolor = Colors.white;
     }
-    return FloatingActionButton(
-      backgroundColor: bcolor,
-      child: Icon(icon, color: iconcolor,),
-      onPressed: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 50,
+        height: 50,
+        child: Icon(icon, color: iconcolor,),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: bcolor,
+          boxShadow: [BoxShadow(color: Color(0x44000000), blurRadius: 10)]
+        ),
+      ),
     );
+  }
+}
+
+class RoundedButton extends StatelessWidget {
+  const RoundedButton({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width * .8,
+        height: 50,
+        child: RaisedButton(
+          shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+          color: Color(0xFFEF6C32),
+          child: Text('My Cart', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
+          onPressed: (){
+            Navigator.of(context).pushNamed('mycart');
+          },
+        ),
+      );
   }
 }
