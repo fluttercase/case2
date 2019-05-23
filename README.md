@@ -1,6 +1,18 @@
 # foodstore
 
-A new Flutter project.
+## 素材：
+
+![img](./assets/2.png)
+
+## demo:
+
+<img src="./assets/d1.png" width="200">
+
+<img src="./assets/d2.png" width="200">
+
+<img src="./assets/d3.png" width="200">
+
+[video](./assets/food.mp4)
 
 ## Getting Started
 
